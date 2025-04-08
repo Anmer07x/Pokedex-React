@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+
 const Detail = () => {
   const { name } = useParams();
   const [pokemon, setPokemon] = useState(null);
@@ -9,9 +10,7 @@ const Detail = () => {
   useEffect(() => {
     const fetchPokemon = async () => {
       try {
-        const response = await fetch(
-          `https://pokeapi.co/api/v2/pokemon/${name}`
-        );
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
         if (!response.ok) {
           throw new Error("Error al obtener datos del Pokémon");
         }
@@ -25,39 +24,34 @@ const Detail = () => {
     fetchPokemon();
   }, [name]);
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  if (!pokemon) {
-    return <p>Cargando...</p>;
-  }
+  if (error) return <p className="detail-error">Error: {error}</p>;
+  if (!pokemon) return <p className="detail-loading">Cargando...</p>;
 
   return (
-    <div>
-      
-      <h1>{pokemon.name}</h1>
-      <img src={pokemon.sprites.front_default} alt={pokemon.name} />
-      <p>Altura: {pokemon.height}</p>
-      <p>Peso: {pokemon.weight}</p>
-      <p>Tipo: {pokemon.types.map((type) => type.type.name).join(", ")}</p>
-      <p>
-        Habilidades:{" "}
-        {pokemon.abilities.map((ability) => ability.ability.name).join(", ")}
-      </p>
-      <p>
-        Stats:{" "}
-        {pokemon.stats
-          .map((stat) => `${stat.stat.name}: ${stat.base_stat}`)
-          .join(", ")}
-      </p>
-      <br />
-      <a href="javascript:history.back()"> Volver Atrás</a>
-      <br />
-      <br />
+    <div className="detail-container">
+      <div className="detail-card">
+        <h1 className="detail-title">{pokemon.name}</h1>
+        <img className="detail-image" src={pokemon.sprites.front_default} alt={pokemon.name} />
+        
+        <div className="detail-info">
+          <p><strong>Altura:</strong> {pokemon.height}</p>
+          <p><strong>Peso:</strong> {pokemon.weight}</p>
+          <p><strong>Tipo:</strong> {pokemon.types.map((t) => t.type.name).join(", ")}</p>
+          <p><strong>Habilidades:</strong> {pokemon.abilities.map((a) => a.ability.name).join(", ")}</p>
+          <p><strong>Stats:</strong></p>
+          <ul className="stat-list">
+            {pokemon.stats.map((s, i) => (
+              <li key={i}>{s.stat.name}: {s.base_stat}</li>
+            ))}
+          </ul>
+        </div>
 
-      <footer>
-        {" "}
+        <button className="back-button" onClick={() => window.history.back()}>
+          Volver Atrás
+        </button>
+      </div>
+
+      <footer className="detail-footer">
         Derechos a <strong>Andres Mena</strong>
       </footer>
     </div>
